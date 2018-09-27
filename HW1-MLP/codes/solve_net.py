@@ -3,7 +3,7 @@ import numpy as np
 
 
 def data_iterator(x, y, batch_size, shuffle=True):
-    indx = range(len(x))
+    indx = list(range(len(x)))
     if shuffle:
         np.random.shuffle(indx)
 
