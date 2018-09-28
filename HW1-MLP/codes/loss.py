@@ -7,9 +7,7 @@ class EuclideanLoss(object):
         self.name = name
 
     def forward(self, input, target):
-        '''Your codes here'''
-        pass
+        return np.sum((input - target) * (input - target)) / (2 * input.size)
 
     def backward(self, input, target):
-        '''Your codes here'''
-        pass
+        return (input - target) / input.size

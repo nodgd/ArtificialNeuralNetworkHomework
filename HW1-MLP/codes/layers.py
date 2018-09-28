@@ -28,25 +28,23 @@ class Relu(Layer):
         super(Relu, self).__init__(name)
 
     def forward(self, input):
-        '''Your codes here'''
-        pass
+        self.input = input
+        return np.maximum(input, 0, input)
 
     def backward(self, grad_output):
-        '''Your codes here'''
-        pass
-
+        grad_output[self.input < 0] = 0
+        return grad_output
 
 class Sigmoid(Layer):
     def __init__(self, name):
         super(Sigmoid, self).__init__(name)
 
     def forward(self, input):
-        '''Your codes here'''
-        pass
+        self.output = 1.0 / (1.0 + np.exp(-input))
+        return self.output
 
     def backward(self, grad_output):
-        '''Your codes here'''
-        pass
+        return grad_output * self.output * (1.0 - self.output)
 
 
 class Linear(Layer):
@@ -64,12 +62,13 @@ class Linear(Layer):
         self.diff_b = np.zeros(out_num)
 
     def forward(self, input):
-        '''Your codes here'''
-        pass
+        self.input = input
+        return np.dot(input, self.W) + self.b
 
     def backward(self, grad_output):
-        '''Your codes here'''
-        pass
+        self.grad_b = np.sum(grad_output, axis=0)
+        self.grad_W = np.dot(self.input.transpose([1, 0]), grad_output.reshape(-1, self.out_num))
+        return np.dot(grad_output, self.W.transpose([1, 0]))
 
     def update(self, config):
         mm = config['momentum']
