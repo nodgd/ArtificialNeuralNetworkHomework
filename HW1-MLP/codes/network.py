@@ -1,3 +1,5 @@
+import numpy as np
+
 class Network(object):
     def __init__(self):
         self.layer_list = []
@@ -12,6 +14,7 @@ class Network(object):
         output = input
         for i in range(self.num_layers):
             output = self.layer_list[i].forward(output)
+            #print('i = ', i, ', np.mean(output) = ' , np.mean(output))
 
         return output
 

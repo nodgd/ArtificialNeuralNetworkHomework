@@ -1,11 +1,12 @@
 import numpy as np
+from threading import Thread
 
+THREAD_COUNT = 8
 
 class Layer(object):
     def __init__(self, name, trainable=False):
         self.name = name
         self.trainable = trainable
-        self._saved_tensor = None
 
     def forward(self, input):
         pass
@@ -16,20 +17,13 @@ class Layer(object):
     def update(self, config):
         pass
 
-    def _saved_for_backward(self, tensor):
-        '''The intermediate results computed during forward stage
-        can be saved and reused for backward, for saving computation'''
-
-        self._saved_tensor = tensor
-
-
 class Relu(Layer):
     def __init__(self, name):
         super(Relu, self).__init__(name)
 
     def forward(self, input):
         self.input = input
-        return np.maximum(input, 0, input)
+        return np.maximum(input, 0)
 
     def backward(self, grad_output):
         grad_output[self.input < 0] = 0
@@ -45,7 +39,6 @@ class Sigmoid(Layer):
 
     def backward(self, grad_output):
         return grad_output * self.output * (1.0 - self.output)
-
 
 class Linear(Layer):
     def __init__(self, name, in_num, out_num, init_std):
@@ -63,12 +56,13 @@ class Linear(Layer):
 
     def forward(self, input):
         self.input = input
-        return np.dot(input, self.W) + self.b
+        output = np.dot(input, self.W) + self.b
+        return output
 
     def backward(self, grad_output):
         self.grad_b = np.sum(grad_output, axis=0)
-        self.grad_W = np.dot(self.input.transpose([1, 0]), grad_output.reshape(-1, self.out_num))
-        return np.dot(grad_output, self.W.transpose([1, 0]))
+        self.grad_W = np.dot(self.input.transpose(), grad_output)
+        return np.dot(grad_output, self.W.transpose())
 
     def update(self, config):
         mm = config['momentum']
