@@ -7,12 +7,10 @@ class EuclideanLoss(object):
         self.name = name
 
     def forward(self, input, target):
-        '''Using your codes in Homework 1'''
-        pass
+        return np.sum((input - target) * (input - target)) / (2 * input.size)
 
     def backward(self, input, target):
-        '''Using your codes in Homework 1'''
-        pass
+        return (input - target) / input.size
 
 
 class SoftmaxCrossEntropyLoss(object):
@@ -20,9 +18,13 @@ class SoftmaxCrossEntropyLoss(object):
         self.name = name
 
     def forward(self, input, target):
-        '''Your codes here'''
-        pass
+        input = input - np.max(input, axis=1, keepdims=True)
+        self._exp_input = np.exp(input)
+        self._sum_exp_input = np.sum(self._exp_input, axis=1)
+        self._sum_target = np.sum(target, axis=1)
+        loss = (np.sum(self._sum_target * np.log(self._sum_exp_input)) - np.sum(target * input)) / input.size
+        return loss
 
     def backward(self, input, target):
-        '''Your codes here'''
-        pass
+        grad_input = ((self._sum_target / self._sum_exp_input).reshape(-1, 1) * self._exp_input - target) / input.size
+        return grad_input

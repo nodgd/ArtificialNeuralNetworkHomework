@@ -9,15 +9,16 @@ train_data, test_data, train_label, test_label = load_mnist_4d('data')
 
 # Your model defintion here
 # You should explore different model architecture
-model = Network()
-model.add(Conv2D('conv1', 1, 4, 3, 1, 0.01))
+
+model = Network()                                       # input.shape = [n, 28, 28, 1]
+model.add(Conv2D('conv1', 1, 4, 3, 1, 0.01))            # output.shape = [n, 28, 28, 4]
 model.add(Relu('relu1'))
-model.add(AvgPool2D('pool1', 2, 0))  # output shape: N x 4 x 14 x 14
-model.add(Conv2D('conv2', 4, 4, 3, 1, 0.01))
+model.add(AvgPool2D('pool1', 2, 0))                     # output.shape = [n, 14, 14, 4]
+model.add(Conv2D('conv2', 4, 4, 3, 1, 0.01))            # output.shape = [n, 14, 14, 4]
 model.add(Relu('relu2'))
-model.add(AvgPool2D('pool2', 2, 0))  # output shape: N x 4 x 7 x 7
-model.add(Reshape('flatten', (-1, 196)))
-model.add(Linear('fc3', 196, 10, 0.1))
+model.add(AvgPool2D('pool2', 2, 0))                     # output.shape = [n, 7, 7, 4]
+model.add(Reshape('flatten', (-1, 196)))                # output.shape = [n, 196]
+model.add(Linear('fc3', 196, 10, 0.01))
 
 loss = SoftmaxCrossEntropyLoss(name='loss')
 
@@ -28,9 +29,9 @@ loss = SoftmaxCrossEntropyLoss(name='loss')
 #       'disp_freq' denotes number of iterations in one epoch to display information.
 
 config = {
-    'learning_rate': 0.0,
+    'learning_rate': 0.01,
     'weight_decay': 0.0,
-    'momentum': 0.0,
+    'momentum': 0.1,
     'batch_size': 100,
     'max_epoch': 100,
     'disp_freq': 5,
