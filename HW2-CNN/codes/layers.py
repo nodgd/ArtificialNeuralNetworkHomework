@@ -156,7 +156,7 @@ class AvgPool2D(Layer):
         output = np.zeros([self.n, self.ho, self.wo, self.c])
         for kh in range(self.ks):
             for kw in range(self.ks):
-                output += self._input_with_pad[ : , kh : : self.ks, kw : : self.ks, : ]
+                output += self._input_with_pad[ : , kh : kh + (self.ho - 1) * self.ks + 1 : self.ks, kw : kw + (self.wo - 1) * self.ks + 1 : self.ks, : ]
         output /= self.ks * self.ks
         return output
 
@@ -165,6 +165,6 @@ class AvgPool2D(Layer):
         temp = grad_output * (self.ks * self.ks)
         for kh in range(self.ks):
             for kw in range(self.ks):
-                grad_input_with_pad[ : , kh : : self.ks, kw : : self.ks, : ] = temp
+                grad_input_with_pad[ : , kh : kh + (self.ho - 1) * self.ks + 1 : self.ks, kw : kw + (self.wo - 1) * self.ks + 1 : self.ks, : ] = temp
         grad_input = grad_input_with_pad[ : , self.pad : self.pad + self.hi, self.pad : self.pad + self.wi, : ]
         return grad_input
