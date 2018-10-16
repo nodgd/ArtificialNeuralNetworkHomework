@@ -1,3 +1,5 @@
+import numpy as np
+
 class Network(object):
     def __init__(self):
         self.layer_list = []
@@ -24,3 +26,8 @@ class Network(object):
         for i in range(self.num_layers):
             if self.layer_list[i].trainable:
                 self.layer_list[i].update(config)
+    
+    def showFirstLayerOutput(self, input):
+        np.save('first_layer_input.npy', input)
+        output = self.layer_list[0].forward(input)
+        np.save('first_layer_output.npy', output)

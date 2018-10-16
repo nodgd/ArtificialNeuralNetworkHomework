@@ -59,3 +59,5 @@ def test_net(model, loss, inputs, labels, batch_size):
 
     msg = '    Testing, total mean loss %.5f, total acc %.5f' % (np.mean(loss_list), np.mean(acc_list))
     LOG_INFO(msg)
+    with open('loss_acc.csv', 'a') as f:
+        f.write('%.7f\n' % (np.mean(loss_list),))

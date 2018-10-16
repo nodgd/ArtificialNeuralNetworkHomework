@@ -35,8 +35,11 @@ config = {
     'batch_size': 100,
     'max_epoch': 100,
     'disp_freq': 5,
-    'test_epoch': 5
+    'test_epoch': 1
 }
+
+with open('loss_acc.csv', 'w') as f:
+    pass
 
 for epoch in range(config['max_epoch']):
     LOG_INFO('Training @ %d epoch...' % (epoch))
@@ -45,3 +48,5 @@ for epoch in range(config['max_epoch']):
     if epoch % config['test_epoch'] == 0:
         LOG_INFO('Testing @ %d epoch...' % (epoch))
         test_net(model, loss, test_data, test_label, config['batch_size'])
+
+model.showFirstLayerOutput(train_data)
