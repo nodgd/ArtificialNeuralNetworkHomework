@@ -105,3 +105,8 @@ venv.bak/
 
 # my .gitignore
 .vscode/
+*.pdf
+*.npy
+loss_acc.csv
+*.png
+*/submit/*

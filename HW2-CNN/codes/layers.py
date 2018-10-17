@@ -96,7 +96,7 @@ class Conv2D(Layer):
         self.pad = pad
         self.ci = in_channel
         self.co = out_channel
-        self.w = np.random.randn(kernel_size, kernel_size, in_channel, out_channel)
+        self.w = np.random.randn(kernel_size, kernel_size, in_channel, out_channel) * init_std
         self.b = np.zeros(out_channel)
 
         self.diff_w = np.zeros(self.w.shape)
