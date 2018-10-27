@@ -3,12 +3,13 @@
 import tensorflow as tf
 import numpy as np
 import os
+import sys
 import time
 from model import Model
 from load_data import load_mnist_2d
 
 tf.app.flags.DEFINE_integer("batch_size", 100, "batch size for training")
-tf.app.flags.DEFINE_integer("num_epochs", 20, "number of epochs")
+tf.app.flags.DEFINE_integer("num_epochs", 100, "number of epochs")
 tf.app.flags.DEFINE_float("keep_prob", 0.5, "drop out rate")
 tf.app.flags.DEFINE_boolean("is_train", True, "False to inference")
 tf.app.flags.DEFINE_string("data_dir", "../MNIST_data", "data dir")
@@ -16,6 +17,11 @@ tf.app.flags.DEFINE_string("train_dir", "./train", "training dir")
 tf.app.flags.DEFINE_integer("inference_version", 0, "the version for inference")
 FLAGS = tf.app.flags.FLAGS
 
+print(sys.platform, type(sys.platform))
+if sys.platform == 'win32':
+    os.system('rd /s /q train')
+else:
+    os.system('rm -rf  train')
 
 def shuffle(X, y, shuffle_parts):  # Shuffle the X and y
     chunk_size = int(len(X) / shuffle_parts)
