@@ -28,11 +28,11 @@ class Model:
     
         with tf.variable_scope("model", reuse=reuse):
             tensor = self.x_
-            tensor = linear_layer(tensor, 128, 0.01)
+            tensor = linear_layer(tensor, 512, 0.01)
             tensor = batch_normalization_layer(tensor, is_train)
             tensor = relu_layer(tensor)
-            tensor = dropout_layer(tensor, FLAGS.keep_prob, is_train)
-            tensor = linear_layer(tensor, 10, 0.08)
+            tensor = dropout_layer(tensor, FLAGS.drop_rate, is_train)
+            tensor = linear_layer(tensor, 10, 0.01)
             logits = tensor
 
         loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.y_, logits=logits))
@@ -45,8 +45,8 @@ class Model:
 def batch_normalization_layer(input, is_train=True):
     return tf.layers.batch_normalization(input, training=is_train)
 
-def dropout_layer(input, keep_prob, is_train=True):
-    return tf.layers.dropout(input, rate=keep_prob, training=is_train)
+def dropout_layer(input, drop_rate, is_train=True):
+    return tf.layers.dropout(input, drop_rate, training=is_train)
 
 def relu_layer(input):
     return tf.nn.relu(input)

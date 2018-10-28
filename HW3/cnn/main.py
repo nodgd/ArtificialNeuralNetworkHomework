@@ -3,12 +3,13 @@
 import tensorflow as tf
 import numpy as np
 import os
+import sys
 import time
 from model import Model
 from load_data import load_mnist_4d
 
 tf.app.flags.DEFINE_integer("batch_size", 100, "batch size for training")
-tf.app.flags.DEFINE_integer("num_epochs", 20, "number of epochs")
+tf.app.flags.DEFINE_integer("num_epochs", 100, "number of epochs")
 tf.app.flags.DEFINE_float("drop_rate", 0.5, "drop out rate")
 tf.app.flags.DEFINE_boolean("is_train", True, "False to inference")
 tf.app.flags.DEFINE_string("data_dir", "../MNIST_data", "data dir")
@@ -16,6 +17,10 @@ tf.app.flags.DEFINE_string("train_dir", "./train", "training dir")
 tf.app.flags.DEFINE_integer("inference_version", 0, "the version for inference")
 FLAGS = tf.app.flags.FLAGS
 
+if sys.platform == 'win32':
+    os.system('rd /s /q train')
+else:
+    os.system('rm -rf  train')
 
 def shuffle(X, y, shuffle_parts):
     chunk_size = int(len(X) / shuffle_parts)
@@ -71,8 +76,13 @@ def valid_epoch(model, sess, X, y): # Valid Process
 def inference(model, sess, X): # Test Process
     return sess.run([model.pred_val], {model.x_: X})[0]
 
+with open('cnn_val_loss.csv', 'w'):
+    pass
 
-with tf.Session() as sess:
+sess_config = tf.ConfigProto()
+sess_config.gpu_options.per_process_gpu_memory_fraction = 0.45
+sess_config.gpu_options.allow_growth = True
+with tf.Session(config=sess_config) as sess:
     if not os.path.exists(FLAGS.train_dir):
         os.mkdir(FLAGS.train_dir)
     if FLAGS.is_train:
@@ -111,6 +121,8 @@ with tf.Session() as sess:
             print("  best validation accuracy:      " + str(best_val_acc))
             print("  test loss:                     " + str(test_loss))
             print("  test accuracy:                 " + str(test_acc))
+            with open('cnn_val_loss.csv', 'a') as f:
+                f.write("%.16f, %.16f, %.16f, %.16f\n" % (train_loss, val_loss, train_acc, val_acc))
 
             if train_loss > max(pre_losses):
                 sess.run(cnn_model.learning_rate_decay_op)
